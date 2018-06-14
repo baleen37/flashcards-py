@@ -1,6 +1,6 @@
 import flask as fl
 
-bp = fl.Blueprint('index', __name__)
+bp = fl.Blueprint('user', __name__)
 
 
 @bp.route('/')
