@@ -1,3 +1,9 @@
-class UserController:
-    def __init__(self, db_session):
-        self.db_session = db_session
+import bcrypt
+
+
+def hash_password(password):
+    return bcrypt.hashpw(password, bcrypt.gensalt())
+
+
+def is_correct_password(password, hashed):
+    return bcrypt.hashpw(password, hashed) == hashed

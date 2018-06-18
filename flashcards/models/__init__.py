@@ -1,2 +1,2 @@
 def import_models():
-    from . import users
+    from . import user

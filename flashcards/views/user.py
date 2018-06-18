@@ -3,7 +3,8 @@ import flask as fl
 from flashcards.core.api import APIResponse
 from flashcards.database import dal
 from flashcards.exc.api import APIException
-from flashcards.models.users import User
+from flashcards.models.user import User
+from flashcards.core.user import hash_password
 
 bp = fl.Blueprint('user', __name__, url_prefix='/users')
 
@@ -14,9 +15,10 @@ def register():
     password = fl.request.form['password']
     if dal.session.query(User).filter(User.username == username).scalar():
         raise APIException('already exists username')
+
     try:
         user = User(username=username)
-        user.password = password
+        user.password = hash_password(password.encode())
         dal.session.add(user)
         dal.session.commit()
 
