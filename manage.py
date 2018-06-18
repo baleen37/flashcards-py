@@ -1,5 +1,5 @@
 import sys
-from flashcards.app import create_app
+from flashcards.application import create_app
 
 
 def runserver():

@@ -11,12 +11,12 @@ class JSONResponse(fl.Response):
 
 
 class APIResponse(JSONResponse):
-    def __init__(self, data=None, status=200, message=''):
+    _status_code = 200
+
+    def __init__(self, data=None, status=None, message=None):
         response = {
-            'meta': {
-                'status': status,
-                'message': message
-            }
+            'status': status or self._status_code,
+            'message': message or ''
         }
         if data:
             response['data'] = data
