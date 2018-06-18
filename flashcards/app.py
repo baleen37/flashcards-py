@@ -1,6 +1,8 @@
+from importlib import import_module
+
 import flask as fl
 
-from flashcards.database import init_engine, init_db, db_session
+from flashcards.database import init_engine, init_db
 
 
 def create_app(config_filename):
@@ -13,12 +15,12 @@ def create_app(config_filename):
     app.register_blueprint(index_bp)
     app.register_blueprint(user_bp)
 
-    init_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    init_db()
+    with app.app_context():
+        import_module('flashcards.middleware')
 
-    # FIXME : for modular
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        db_session.remove()
+    init_engine(
+        uri=app.config['SQLALCHEMY_DATABASE_URI']
+    )
+    init_db()
 
     return app
