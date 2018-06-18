@@ -3,12 +3,12 @@ class Config:
 
 
 class Development(Config):
-    pass
+    DEBUG = True
 
 
 class Production(Config):
-    pass
+    PRODUCTION = True
 
 
 class Testing(Config):
-    Testing = True
+    TESTING = True

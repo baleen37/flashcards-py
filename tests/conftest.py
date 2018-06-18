@@ -17,7 +17,3 @@ def app():
         yield app
         dal.drop_all()
 
-
-@pytest.fixture(scope='session')
-def test_client(app):
-    return app.test_client()
