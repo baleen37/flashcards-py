@@ -18,6 +18,7 @@ def app():
 @pytest.fixture(scope='session')
 def dal(app):
     _dal.setup(app.config['SQLALCHEMY_DATABASE_URI'])
+    _dal.drop_all()
     _dal.create_all()
 
     yield _dal
@@ -27,19 +28,14 @@ def dal(app):
 
 @pytest.fixture
 def db_session(dal):
-    connection = dal.engine.connect()
     dal.create_all()
 
-    transaction = connection.begin()
     session = dal.create_session()
 
     yield session
 
-    transaction.rollback()
-    session.commit()
+    session.close()
     dal.drop_all()
-    connection.close()
-    session.remove()
 
 
 @pytest.fixture

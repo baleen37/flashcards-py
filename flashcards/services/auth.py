@@ -1,6 +1,9 @@
+import jwt
+
 from flashcards.core.exceptions import PersistenceError, ValidationError
+from flashcards.core.user import LoginUserInfo
 from flashcards.models.user import User
-from flashcards.utils.auth import hash_password
+from flashcards.utils.auth import generate_hash_password, is_correct_password
 
 
 class RegistrationService:
@@ -13,7 +16,6 @@ class RegistrationService:
         try:
             self._validate(user_info)
         except Exception as e:
-            print(e)
             raise
 
         user = self._store_user(user_info)
@@ -33,7 +35,7 @@ class RegistrationService:
         try:
             user = User(
                 username=user_info.username,
-                password=hash_password(user_info.password.encode()),
+                password=generate_hash_password(user_info.password.encode()),
             )
             self.db_session.add(user)
             self.db_session.commit()
@@ -43,3 +45,35 @@ class RegistrationService:
             raise PersistenceError("Could not persist user")
 
 
+class LoginService:
+
+    def __init__(self, db_session, secret_key):
+        assert secret_key, 'Required secret_key'
+
+        self.db_session = db_session
+        self.secret_key = secret_key
+
+    def login(self, user_info: LoginUserInfo):
+        try:
+            self._validate(user_info)
+
+            user = self.db_session.query(User).filter(User.username == user_info.username).scalar()
+            if not user:
+                raise ValidationError('Not exists user')
+
+            if not is_correct_password(user_info.password.encode(), user.password):
+                raise ValidationError('Wrong password')
+
+            return self._generate_token(user)
+        except Exception as e:
+            raise
+
+    def _validate(self, user_info):
+        if not user_info.username:
+            raise ValidationError('Required username')
+
+        if not user_info.password:
+            raise ValidationError('Required password')
+
+    def _generate_token(self, user: User):
+        return jwt.encode({'username': user.username}, self.secret_key)

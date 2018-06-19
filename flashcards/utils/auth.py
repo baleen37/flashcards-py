@@ -2,7 +2,7 @@ import bcrypt
 import jwt
 
 
-def hash_password(password):
+def generate_hash_password(password):
     return bcrypt.hashpw(password, bcrypt.gensalt())
 
 

@@ -1,9 +1,19 @@
 import pytest
 
 from flashcards.core.exceptions import ValidationError
-from flashcards.core.user import UserRegistrationInfo
+from flashcards.core.user import UserRegistrationInfo, LoginUserInfo
 from flashcards.models.user import User
-from flashcards.services.auth import RegistrationService
+from flashcards.services.auth import RegistrationService, LoginService
+from flashcards.utils.auth import generate_hash_password
+
+
+@pytest.fixture
+def normal_user(db_session):
+    user = User(username='baleen', password=generate_hash_password('password'.encode()))
+    db_session.add(user)
+    db_session.commit()
+
+    return user
 
 
 class TestRegistrationService:
@@ -11,7 +21,7 @@ class TestRegistrationService:
     def test_register(self, db_session):
         user_info = UserRegistrationInfo(
             username='baleen',
-            password='testtest',
+            password='password',
         )
 
         self._get_service(db_session).register(
@@ -33,3 +43,18 @@ class TestRegistrationService:
     def _get_service(self, db_session):
         return RegistrationService(db_session)
 
+
+class TestLoginService:
+
+    def test_login(self, app, db_session, normal_user):
+        user_info = LoginUserInfo(username=normal_user.username,
+                                  password='password')
+        self._get_service(app, db_session).login(user_info=user_info)
+
+    def test_login_wrong_params(self, app, db_session, normal_user):
+        user_info = LoginUserInfo(username=normal_user.username, password='None')
+        with pytest.raises(ValidationError) as excinfo:
+            self._get_service(app, db_session).login(user_info)
+
+    def _get_service(self, app, db_session):
+        return LoginService(db_session, app.config['SECRET_KEY'])

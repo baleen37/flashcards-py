@@ -2,9 +2,9 @@ import flask as fl
 
 from flashcards.core.api import APIResponse
 from flashcards.core.exceptions import APIException
-from flashcards.core.user import UserRegistrationInfo
+from flashcards.core.user import UserRegistrationInfo, LoginUserInfo
 from flashcards.database import dal
-from flashcards.services.auth import RegistrationService
+from flashcards.services.auth import RegistrationService, LoginService
 
 bp = fl.Blueprint('user', __name__, url_prefix='/users')
 

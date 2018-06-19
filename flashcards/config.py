@@ -1,4 +1,5 @@
 class Config:
+    SECRET_KEY = 'SECRET_KEY'
     SQLALCHEMY_DATABASE_URI = 'postgres://postgres:postgres@localhost:5432/postgres'
 
 
