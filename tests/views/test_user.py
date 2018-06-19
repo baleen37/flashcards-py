@@ -2,8 +2,8 @@ import pytest
 
 
 @pytest.mark.parametrize('username', ['aaaaaaaa', 'bbbbbb'])
-@pytest.mark.parametrize('password', ['AAAAAAAAAA', 'BBBBBB'])
-def test_register(app, username, password):
+@pytest.mark.parametrize('password', ['AAAAAAAA', 'BBBBBB'])
+def test_register(app, username, password, default_settings):
     res = app.test_client().post(
         '/users/register',
         data={
@@ -15,4 +15,4 @@ def test_register(app, username, password):
 
     json_data = res.get_json()
     data = json_data['data']
-    assert data['user']['username'] == username
+    assert data['username'] == username

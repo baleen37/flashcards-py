@@ -2,7 +2,7 @@ import flask as fl
 
 from flashcards.core.api import APIResponse
 from flashcards.database import dal
-from flashcards.exc.api import APIException
+from flashcards.core.exceptions import APIException
 
 
 @fl.current_app.teardown_request

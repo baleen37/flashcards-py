@@ -1,10 +1,10 @@
 import flask as fl
 
 from flashcards.core.api import APIResponse
+from flashcards.core.exceptions import APIException
+from flashcards.core.user import UserRegistrationInfo
 from flashcards.database import dal
-from flashcards.exc.api import APIException
-from flashcards.models.user import User
-from flashcards.core.user import hash_password
+from flashcards.services.auth import RegistrationService
 
 bp = fl.Blueprint('user', __name__, url_prefix='/users')
 
@@ -13,19 +13,15 @@ bp = fl.Blueprint('user', __name__, url_prefix='/users')
 def register():
     username = fl.request.form['username']
     password = fl.request.form['password']
-    if dal.session.query(User).filter(User.username == username).scalar():
-        raise APIException('already exists username')
-
     try:
-        user = User(username=username)
-        user.password = hash_password(password.encode())
-        dal.session.add(user)
-        dal.session.commit()
+        user_info = UserRegistrationInfo(
+            username=username,
+            password=password)
+        rs = RegistrationService(dal.session)
+        user = rs.register(user_info)
 
         return APIResponse(data={
-            'user': {
-                'username': username,
-            }
+            'username': user.username,
         })
     except Exception as e:
         dal.session.rollback()

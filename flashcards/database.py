@@ -13,8 +13,10 @@ class Dal:
 
     def setup(self, uri, **kwargs):
         self.engine = create_engine(uri, **kwargs)
-        self.session = scoped_session(lambda: create_session(bind=self.engine,
-                                                             autocommit=False))
+        self.session = self.create_session()
+
+    def create_session(self):
+        return scoped_session(lambda: create_session(bind=self.engine, autocommit=False))
 
     def create_all(self):
         from flashcards.models import import_models

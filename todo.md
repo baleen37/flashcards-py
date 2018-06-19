@@ -4,9 +4,8 @@
     - [x] Making extendable config.py
   - /users
     - [] /register
-      - [x ]Initialize table users: username, password, created_at
+      - [x]Initialize table users: username, password, created_at
       - [x] Make to hash password via bcrypt
-      - [] Storing user session into redis storage, Issue user auth token.
     - [] /login
       - Compare password whose user input with storing hashed password
       - Choise token way eg. JWT, server side sesison

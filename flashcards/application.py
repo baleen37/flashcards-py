@@ -25,5 +25,6 @@ def create_app(config_obj):
     with app.app_context():
         import_module('flashcards.middleware')
         dal.setup(uri=app.config['SQLALCHEMY_DATABASE_URI'])
+        dal.create_all()
 
     return app

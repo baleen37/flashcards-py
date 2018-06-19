@@ -1,9 +1,11 @@
 import bcrypt
+import jwt
 
 
-def hash_password(password):
-    return bcrypt.hashpw(password, bcrypt.gensalt())
+class UserRegistrationInfo:
+    username = None
+    password = None
 
+    def __init__(self, **kwargs) -> None:
+        self.__dict__.update(kwargs)
 
-def is_correct_password(password, hashed):
-    return bcrypt.hashpw(password, hashed) == hashed
