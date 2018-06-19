@@ -4,16 +4,6 @@ from flashcards.core.exceptions import ValidationError
 from flashcards.core.user import UserRegistrationInfo, LoginUserInfo
 from flashcards.models.user import User
 from flashcards.services.auth import RegistrationService, LoginService
-from flashcards.utils.auth import generate_hash_password
-
-
-@pytest.fixture
-def normal_user(db_session):
-    user = User(username='baleen', password=generate_hash_password('password'.encode()))
-    db_session.add(user)
-    db_session.commit()
-
-    return user
 
 
 class TestRegistrationService:
@@ -46,13 +36,13 @@ class TestRegistrationService:
 
 class TestLoginService:
 
-    def test_login(self, app, db_session, normal_user):
-        user_info = LoginUserInfo(username=normal_user.username,
+    def test_login(self, app, db_session, user):
+        user_info = LoginUserInfo(username=user.username,
                                   password='password')
         self._get_service(app, db_session).login(user_info=user_info)
 
-    def test_login_wrong_params(self, app, db_session, normal_user):
-        user_info = LoginUserInfo(username=normal_user.username, password='None')
+    def test_login_wrong_params(self, app, db_session, user):
+        user_info = LoginUserInfo(username=user.username, password='None')
         with pytest.raises(ValidationError) as excinfo:
             self._get_service(app, db_session).login(user_info)
 

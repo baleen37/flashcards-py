@@ -3,6 +3,8 @@ import pytest
 from flashcards.application import create_app, get_config
 from flashcards.database import dal as _dal
 
+from tests.fixtures.user import *  # noqa
+
 
 @pytest.fixture(scope='session')
 def app():
@@ -18,7 +20,6 @@ def app():
 @pytest.fixture(scope='session')
 def dal(app):
     _dal.setup(app.config['SQLALCHEMY_DATABASE_URI'])
-    _dal.drop_all()
     _dal.create_all()
 
     yield _dal
@@ -27,15 +28,18 @@ def dal(app):
 
 
 @pytest.fixture
-def db_session(dal):
+def db_session(request, dal):
     dal.create_all()
 
     session = dal.create_session()
 
-    yield session
+    def fn():
+        session.close()
+        dal.drop_all()
 
-    session.close()
-    dal.drop_all()
+    request.addfinalizer(fn)
+
+    return session
 
 
 @pytest.fixture

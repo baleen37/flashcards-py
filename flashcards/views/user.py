@@ -11,8 +11,9 @@ bp = fl.Blueprint('user', __name__, url_prefix='/users')
 
 @bp.route('/register', methods=['POST'])
 def register():
-    username = fl.request.form['username']
-    password = fl.request.form['password']
+    username = fl.request.form.get('username')
+    password = fl.request.form.get('password')
+
     try:
         user_info = UserRegistrationInfo(
             username=username,
@@ -24,13 +25,26 @@ def register():
             'username': user.username,
         })
     except Exception as e:
-        dal.session.rollback()
         raise APIException(e)
 
 
 @bp.route('/login', methods=['POST'])
 def login():
-    return ''
+    username = fl.request.form.get('username')
+    password = fl.request.form.get('password')
+
+    try:
+        user_info = LoginUserInfo(username=username, password=password)
+        ls = LoginService(dal.session, secret_key=fl.current_app.config['SECRET_KEY'])
+        token = ls.login(user_info)
+
+        return APIResponse(data={
+            'username': token.user.username,
+            'token': token.token.decode('utf-8')
+        })
+    except Exception as e:
+        raise APIException(e, status_code=401)
+
 
 
 @bp.route('/logout')
