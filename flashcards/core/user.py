@@ -6,6 +6,10 @@ class DataInfo:
         self.__dict__.update(kwargs)
 
 
+class ContextUserInfo(DataInfo):
+    username = None
+
+
 class UserRegistrationInfo(DataInfo):
     username = None
     password = None

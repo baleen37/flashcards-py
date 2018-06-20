@@ -22,9 +22,9 @@ def is_correct_password(password, hashed) -> bool:
         return False
 
 
-def encode_jwt(self, payload, secret, algorithm='HS256'):
-    return jwt.encode(payload, secret, algorithm)
+def encode_jwt(payload, secret):
+    return jwt.encode(payload, secret)
 
 
-def decode_jwt(self, payload, secret, algorithm='HS256'):
-    return jwt.encode(payload, secret, algorithm)
+def decode_jwt(payload, secret):
+    return jwt.decode(payload, secret)
