@@ -31,3 +31,4 @@ def test_login(app, user, default_settings):
     json_data = res.get_json()
     assert json_data['data']['token']
     assert json_data['data']['username'] == user.username
+    assert 'Bearer' in res.headers['Authorization']

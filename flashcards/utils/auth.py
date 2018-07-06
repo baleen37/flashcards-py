@@ -1,5 +1,9 @@
+from functools import wraps
+import flask as fl
 import bcrypt
 import jwt
+
+from flashcards.core.exceptions import UnauthorizedError
 
 
 def _to_bytes(bytes_or_str):
@@ -28,3 +32,13 @@ def encode_jwt(payload, secret):
 
 def decode_jwt(payload, secret):
     return jwt.decode(payload, secret)
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if fl.g.user is None:
+            raise UnauthorizedError('Required login')
+        return f(*args, **kwargs)
+
+    return decorated

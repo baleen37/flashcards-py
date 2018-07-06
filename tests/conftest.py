@@ -6,7 +6,7 @@ from flashcards.database import dal as _dal
 from tests.fixtures.user import *  # noqa
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def app():
     app = create_app(get_config('flashcards.config.Testing'))
     ctx = app.app_context()
@@ -17,7 +17,12 @@ def app():
     ctx.pop()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture
 def dal(app):
     _dal.setup(app.config['SQLALCHEMY_DATABASE_URI'])
     _dal.create_all()

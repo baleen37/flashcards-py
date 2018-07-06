@@ -2,17 +2,15 @@ import flask as fl
 
 from flashcards.core.api import APIResponse
 from flashcards.core.exceptions import APIException
-from flashcards.database import dal
-from flashcards.models.card import Card
+from flashcards.utils.auth import login_required
 
 bp = fl.Blueprint('card', __name__, url_prefix='/cards')
 
 
-@bp.route('/', methods=['GET'])
+@bp.route('/')
+@login_required
 def index():
     try:
-        cards = dal.session.query(Card).filter(Card.user_id == 1).all()
-
         return APIResponse(data={
             'cards': []
         })

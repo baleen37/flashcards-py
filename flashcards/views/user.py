@@ -40,8 +40,8 @@ def login():
 
         return APIResponse(data={
             'username': token.user.username,
-            'token': token.token.decode('utf-8')
-        })
+            'token': token.token.decode()
+        }, headers={'Authorization': f'Bearer {token.token.decode()}'})
     except Exception as e:
         raise APIException(e, status_code=401)
 

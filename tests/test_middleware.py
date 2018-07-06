@@ -3,9 +3,9 @@ from flashcards.core.exceptions import UnauthorizedError
 from flashcards.utils.auth import encode_jwt
 
 
-def test_inject_user(app, user):
+def test_inject_user(app, client, user):
     encoded = encode_jwt({'username': user.username}, app.config['SECRET_KEY'])
-    res = app.test_client().get('/', headers={'Authorization': f'Bearer {encoded.decode()}'})
+    res = client.get('/', headers={'Authorization': f'Bearer {encoded.decode()}'})
     assert res.status_code == 200
 
     assert fl.g.user.username == user.username

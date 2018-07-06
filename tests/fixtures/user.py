@@ -14,3 +14,22 @@ def user(db_session):
     db_session.commit()
 
     return user
+
+
+class AuthActions:
+    def __init__(self, client):
+        self._client = client
+
+    def login(self, username='test_username', password='password'):
+        return self._client.post(
+            '/users/login',
+            data={'username': username, 'password': password}
+        )
+
+    def logout(self):
+        return self._client.get('/users/logout')
+
+
+@pytest.fixture
+def auth(client):
+    return AuthActions(client)

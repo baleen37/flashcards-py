@@ -18,9 +18,10 @@ def create_app(config_obj):
 
     from flashcards.views.index import bp as index_bp
     from flashcards.views.user import bp as user_bp
+    from flashcards.views.card import bp as card_bp
 
-    app.register_blueprint(index_bp)
-    app.register_blueprint(user_bp)
+    for bp in [index_bp, user_bp, card_bp]:
+        app.register_blueprint(bp)
 
     with app.app_context():
         import_module('flashcards.middleware')
